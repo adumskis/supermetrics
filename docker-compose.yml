@@ -1,0 +1,57 @@
+version: '3.7'
+
+services:
+  php:
+    build:
+      context: .
+      target: dev
+      dockerfile: .docker/php/Dockerfile
+    container_name: supermetrics_php
+    restart: unless-stopped
+    working_dir: /code
+    environment:
+      - COMPOSER_ALLOW_SUPERUSER=1
+    networks:
+      - supermetrics
+    volumes:
+      - ./:/code
+      - ~/.composer/cache:/.composer/cache
+      - ~/.config/psysh:/.config/psysh
+
+  nginx:
+    build:
+      context: .
+      target: dev
+      dockerfile: .docker/nginx/Dockerfile
+    container_name: supermetrics_nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    networks:
+      - supermetrics
+    volumes:
+      - ./:/code
+
+  db:
+    image: mariadb:10.5.4
+    container_name: supermetrics_db
+    restart: unless-stopped
+    ports:
+      - "8081:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=supermetrics
+      - MYSQL_DATABASE=supermetrics
+      - MYSQL_USER=supermetrics
+      - MYSQL_PASSWORD=supermetrics
+    networks:
+      - supermetrics
+    volumes:
+      - supermetrics_db_data:/var/lib/mysql
+
+volumes:
+  supermetrics_db_data:
+    driver: local
+
+networks:
+  supermetrics:
+    driver: bridge

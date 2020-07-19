@@ -1,0 +1,17 @@
+{
+    "name": "algirdasd/supermetrics",
+    "authors": [
+        {
+            "name": "Algirdas Dumskis",
+            "email": "algirdasdum@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    }
+}
