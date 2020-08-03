@@ -1,0 +1,17 @@
+routes:
+  get_average_posts_length_by_months:
+    path: /stats/average-posts-length-by-months
+    controller: controllers.stats_controller::getAveragePostsLengthByMonths
+    method: GET
+  get_longest_posts_by_months:
+    path: /stats/longest-posts-by-months
+    controller: controllers.stats_controller::getLongestPostsByMonths
+    method: GET
+  get_posts_count_by_weeks:
+    path: /stats/posts-count-by-weeks
+    controller: controllers.stats_controller::getPostsCountByWeeks
+    method: GET
+  get_average_posts_count_per_user_by_months:
+    path: /stats/average-posts-count-per-user-by-months
+    controller: controllers.stats_controller::getAveragePostsCountPerUserByMonths
+    method: GET
