@@ -1,0 +1,26 @@
+#!/usr/bin/env php
+<?php
+
+use App\Services\Database\ConnectionFactory;
+use Illuminate\Database\Schema\Blueprint;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Illuminate\Database\Schema\Grammars\MySqlGrammar;
+
+require __DIR__ . '/../vendor/autoload.php';
+
+/** @var ContainerBuilder $container */
+$container = require_once __DIR__ . '/../bootstrap/container.php';
+
+/** @var ConnectionFactory $connectionFactory */
+$connectionFactory = $container->get('database.connection_factory');
+$connection = $connectionFactory->make();
+$connection->setSchemaGrammar(new MySqlGrammar());
+
+$connection->getSchemaBuilder()->create('stats', function (Blueprint $table) {
+    $table->bigIncrements('id')->unsigned();
+    $table->string('post_id', 64)->unique()->index();
+    $table->string('user_id', 64);
+    $table->integer('post_length')->unsigned();
+    $table->tinyInteger('created_month')->unsigned()->index();
+    $table->tinyInteger('created_week')->unsigned()->index();
+});
