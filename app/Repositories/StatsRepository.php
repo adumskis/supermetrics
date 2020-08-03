@@ -21,7 +21,6 @@ class StatsRepository extends BaseRepository
                 'post_id' => $post->getId(),
                 'user_id' => $post->getFromId(),
                 'post_length' => strlen($post->getMessage()),
-                'created_year' => $post->getCreatedTime()->format('Y'),
                 'created_month' => $post->getCreatedTime()->format('n'),
                 'created_week' => $post->getCreatedTime()->format('W')
             ];
