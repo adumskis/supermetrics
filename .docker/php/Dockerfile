@@ -9,6 +9,8 @@ RUN apt-get update && apt-get install -y \
     curl \
     libonig-dev
 RUN docker-php-ext-install pdo_mysql mbstring zip
+RUN pecl install redis
+RUN docker-php-ext-enable redis
 COPY .docker/php/php.ini /usr/local/etc/php/conf.d/php.ini
 
 
