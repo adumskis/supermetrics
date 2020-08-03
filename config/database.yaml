@@ -1,0 +1,5 @@
+host: supermetrics_db
+port: 3306
+database: supermetrics
+username: supermetrics
+password: supermetrics
