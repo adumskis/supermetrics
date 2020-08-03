@@ -1,0 +1,88 @@
+parameters:
+  base_path: '/code'
+services:
+#  Config
+  config.builder:
+    class: App\Services\Config\Builder
+    arguments: ['%base_path%']
+
+  config:
+    class: App\Services\Config\Config
+    arguments: ['@config.builder']
+
+# Database
+  database.mysql_connector:
+    class: Illuminate\Database\Connectors\MySqlConnector
+
+  database.connection_factory:
+    class: App\Services\Database\ConnectionFactory
+    arguments: ['@database.mysql_connector', '@config']
+
+  database:
+    class: App\Services\Database\Database
+    arguments: ['@database.connection_factory']
+
+# Repositories
+  repository.stats:
+    class: App\Repositories\StatsRepository
+    arguments: ['@database']
+
+# Cache
+  cache.connection.redis:
+    class: \Redis
+
+  cache.connection:
+    class: App\Services\Cache\Drivers\RedisDriver\Connection
+    arguments: ['@cache.connection.redis', '@config']
+
+  cache:
+    class: App\Services\Cache\Cache
+    arguments: ['@cache.connection']
+
+# Routing
+  routing.router_factory:
+    class: App\Services\Routing\RouterFactory
+    arguments: ['%base_path%']
+
+# Controllers
+  controllers.stats_controller:
+    class: App\Controllers\StatsController
+    arguments: ['@repository.stats']
+
+# Jobs
+  job.fetch_posts:
+    class: App\Jobs\FetchPostsJob
+    arguments: ['@supermetrics', '@repository.stats']
+
+# Supermetrics
+  supermetrics.request_builder:
+    class: App\Services\SupermetricsClient\RequestBuilder
+
+  supermetrics.client:
+    class: App\Services\SupermetricsClient\Client
+    arguments: ['@supermetrics.request_builder', '@config']
+
+  supermetrics.mappers.register_mapper:
+    class: App\Services\SupermetricsClient\Mappers\RegisterMapper
+
+  supermetrics.mappers.post_mapper:
+    class: App\Services\SupermetricsClient\Mappers\PostMapper
+
+  supermetrics.mappers.posts_collection_mapper:
+    class: App\Services\SupermetricsClient\Mappers\PostsCollectionMapper
+    arguments: ['@supermetrics.mappers.post_mapper']
+
+  supermetrics.response_mapper:
+    class: App\Services\SupermetricsClient\ResponseMapper
+    calls:
+      - [addMapper, ['@supermetrics.mappers.register_mapper']]
+      - [addMapper, ['@supermetrics.mappers.post_mapper']]
+      - [addMapper, ['@supermetrics.mappers.posts_collection_mapper']]
+
+  supermetrics.token_storage:
+    class: App\Services\SupermetricsClient\TokenStorage
+    arguments: ['@cache']
+
+  supermetrics:
+    class: App\Services\SupermetricsClient\Supermetrics
+    arguments: ['@supermetrics.client', '@config', '@supermetrics.response_mapper', '@supermetrics.token_storage']
