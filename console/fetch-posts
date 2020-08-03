@@ -1,0 +1,16 @@
+#!/usr/bin/env php
+<?php
+
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use App\Jobs\FetchPostsJob;
+
+require __DIR__ . '/../vendor/autoload.php';
+
+/** @var ContainerBuilder $container */
+$container = require_once __DIR__ . '/../bootstrap/container.php';
+
+/** @var FetchPostsJob $fetchPostJob */
+$fetchPostJob = $container->get('job.fetch_posts');
+$fetchPostJob->process();
+
+echo "Done!\n";
