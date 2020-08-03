@@ -24,3 +24,5 @@ $connection->getSchemaBuilder()->create('stats', function (Blueprint $table) {
     $table->tinyInteger('created_month')->unsigned()->index();
     $table->tinyInteger('created_week')->unsigned()->index();
 });
+
+echo "Done!\n";
